@@ -3,323 +3,260 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>State of Treason – Prologue</title>
+  <title>2026 NFL Draft Tracker</title>
   <style>
     :root {
       --bg: #0f0f0f;
       --text: #e0e0e0;
       --accent: #ff4d4d;
       --border: #333;
+      --table-header: #222;
+      --table-row: #1a1a1a;
+      --table-hover: #2a2a2a;
     }
     [data-theme="light"] {
       --bg: #f8f9fa;
       --text: #212529;
       --accent: #c82333;
       --border: #dee2e6;
+      --table-header: #e9ecef;
+      --table-row: #fff;
+      --table-hover: #f1f3f5;
     }
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Georgia', serif;
+      font-family: -apple-system, BlinkMacOSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.7;
-      transition: all 0.4s ease;
+      line-height: 1.6;
+      transition: all 0.3s ease;
     }
     .container {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 20px;
     }
     header {
       text-align: center;
-      margin-bottom: 3rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
     h1 {
-      font-size: 2.8rem;
       margin: 0;
+      font-size: 2.5rem;
       color: var(--accent);
     }
     .subtitle {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       opacity: 0.8;
       margin-top: 0.5rem;
     }
-    .content {
-      font-size: 1.15rem;
-      text-align: justify;
-      margin: 0 auto;
-      max-width: 80ch;
-    }
-    .page-number {
-      text-align: right;
-      font-size: 0.9rem;
-      opacity: 0.6;
-      margin-top: 1rem;
-    }
     .controls {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 100;
       display: flex;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     button {
       background: var(--accent);
       color: white;
       border: none;
-      padding: 10px 16px;
+      padding: 10px 20px;
       border-radius: 6px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 600;
       transition: background 0.3s;
     }
     button:hover {
       background: #d93636;
     }
-    #typewriter {
-      white-space: pre-wrap;
-      opacity: 0;
-      animation: fadeIn 1.5s forwards 0.5s;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: var(--table-row);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
-    @keyframes fadeIn {
-      to { opacity: 1; }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--table-header);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    tr:hover {
+      background: var(--table-hover);
+    }
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+    .error {
+      color: #ff4d4d;
+      text-align: center;
+      padding: 2rem;
+    }
+    .last-updated {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      text-align: right;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body data-theme="dark">
 
-  <div class="controls">
-    <button onclick="toggleTheme()">Toggle Theme</button>
-  </div>
-
   <div class="container">
     <header>
-      <h1>State of Treason</h1>
-      <div class="subtitle">Prologue</div>
+      <h1>2026 NFL Draft Tracker</h1>
+      <div class="subtitle">Daily Big Board Aggregator – Round 1</div>
     </header>
 
-    <div class="content" id="typewriter">
-The city was burning again.
-
-Not literally—not yet—but it was coming. The signs were all there: crowds swelling in the streets, chants turning feral, anger feeding on itself. Every channel ran the same looping footage—shoving matches, masked faces, fists in the air. It always started like this. Noise first. Fire later. Broken glass after that.
-
-What sparked it this time? Did anyone even care anymore?
-
-She sat alone in her townhouse study, barefoot on hardwood, a legal pad balanced on her knee. The television washed the room in cold light. The sound was muted. It didn’t matter. She knew the cycle better than the anchors did.
-
-Anger. Outrage. Panel. Hashtag. Repeat.
-
-What was happening to the country?
-
-She flipped to another channel. Different network, same unraveling. A banner crawled across the bottom of the screen:
-
-INTELLIGENCE COMMUNITY UNDER FIRE: “SYSTEMIC FAILURES”
-
-Her jaw stiffened.
-
-That phrase pulled her backward—clean and sudden—into a memory she could never mute.
-
-——
-
-Two years earlier.
-
-A desert compound filled the screen of her mind: cracked walls, scorched earth, the cratered geometry of an indirect-fire strike. Fourteen Americans dead. Dozens wounded.
-
-She saw the memo she’d written—eight pages, tightly argued, mapping a Quds Force network probing American positions through cartel intermediaries. She had recommended preemptive disruption: hard, deniable, decisive.
-
-The memo had reached the Oval.
-
-And died there.
-
-The President’s chief of staff had summoned her afterward, palms pressed together in a posture of empathy he had practiced in a mirror.
-
-Wrong timing. Bad optics. We have to avoid escalation. You understand.
-
-Oh, she understood.
-
-She also understood what came next.
-
-The attack she’d predicted—down to the mortar pattern—hit an American forward operating base. The crawl on television filled with numbers she would never forget.
-
-FOURTEEN DEAD. DOZENS WOUNDED.
-
-Then the photo appeared. Dress blues. Clear eyes. A calm, proud half-smile.
-
-CAPT. MATTHEW CARLISLE, 32.
-
-Her brother.
-
-Younger by seven years. Same eyes. Same jaw.
-
-She remembered sitting in this same room, frozen, as reporters speculated about “intelligence lapses” and “internal disagreements.”
-
-By morning, leaks had begun—targeted, surgical.
-
-“Senior NSC official.”
-
-“Deputy-level planner.”
-
-“Source of the flawed recommendation.”
-
-The fact that she had recommended the opposite never made it into the leaks.
-
-Cable news ran her photo in soft focus, framed by sympathetic graphics. The op-eds were less gentle. One pundit couldn’t help but comment that “some in Washington rise too fast.”
-
-Within a week, she had “chosen to step down.”
-
-Within a month, she was gone.
-
-The President’s poll numbers dipped briefly, then rebounded. The narrative hardened. The country moved on.
-
-She didn’t.
-
-——
-
-The television before her flickered back into focus—present now, not memory. The same President sat behind the Resolute Desk, smiling through a friendly interview. The chyron praised his “steady hand.” The host chuckled at his jokes. Split-screen footage showed him clasping hands with foreign leaders, touring disaster sites, delivering eulogies.
-
-He wore loss like a borrowed suit. Just tight enough to look sincere.
-
-She watched his lips move, saw the tilt of his head, the practiced pause. She had sat in the Situation Room and watched him perform that same calculus—turning death into narrative like it was instinct.
-
-She clicked the TV off.
-
-Silence dropped over the room like a curtain.
-
-On the coffee table lay three neat stacks of paper: open-source assessments, polling crosstabs, and a printed, heavily highlighted copy of the Presidential Succession Act.
-
-She picked up the Act.
-
-President. Vice President. Speaker of the House. President pro tempore of the Senate. Secretary of State…
-
-Her pen tapped the margin.
-
-It wasn’t the order that mattered. It was the structure.
-
-The first two positions were fortified—hedged by tradition, protected by inertia and myth.
-
-But the third?
-
-The Speaker’s chair was political, not sacred. It could be taken, shaped, weaponized.
-
-The law didn’t care how a Speaker arrived at the chair.
-
-It only cared that the chair existed.
-
-She set the Act aside and pulled the legal pad closer. The first page was already dense with notes—arrows, boxes, the bones of an architecture.
-
-MEDIA
-INTEL
-DOD
-HILL
-
-Under “MEDIA,” she listed anchors, editors, and a columnist or two who still believed enemies existed beyond domestic political gaslighting.
-
-Under “INTEL,” a handful of names—disillusioned veterans who hated what the agencies had become: slower, softer, paralyzed by committees and political appointees.
-
-Under “DOD,” she wrote one name and circled it twice.
-
-She had met him once, in a SCIF off the West Wing. A Lieutenant Colonel then. Hard eyes. Hard answers. The kind of man who understood war wasn’t a slide deck. He had no patience for the President’s preference for optics over action.
-
-She wondered where he was now.
-
-Probably forced into retirement or buried in a staff job—men like that rarely climbed.
-
-Under “HILL,” she wrote a single title:
-
-Speaker.
-
-Luther Stanley.
-
-She didn’t like him. She didn’t need to. He was vain, reckless, a walking headline—once a rising star, now a cautionary tale.
-
-But he had two things she could use: a grievance like a second spine, and a hunger for relevance so sharp it bordered on desperation.
-
-He hated the President almost as much as she did.
-
-Almost.
-
-She flipped back through earlier notebook pages—raw, unguarded lines scribbled in moments she now regretted:
-
-The country is addicted to theater.
-Elections aren’t strategy—they’re improv with consequences.
-Everything is rigged!!!
-
-She struck through them with a single line.
-
-Emotion had cost her everything once.
-
-It would not guide what came next.
-
-This wasn’t vengeance.
-
-This was correction.
-
-She rose and crossed to the window.
-
-Outside, the city hummed—sirens, distant shouting, a helicopter cutting low over the river. The Capitol dome glowed against the night like an indictment.
-
-She used to believe in the machinery of the Republic.
-
-In process.
-
-In checks and balances.
-
-Not anymore.
-
-Her brother’s name was etched on a tombstone in Arlington because a politician wanted to look measured on the evening news.
-
-The President of the United States had taken her work, twisted it into a shield, and watched her burn for his mistake.
-
-And the system had rewarded him.
-
-That was the lesson.
-
-Not that America was weak.
-
-That it was governable.
-
-By those ruthless enough to take what they wanted.
-
-She turned back to the legal pad.
-
-The architecture waited.
-
-She picked up her pen.
-
-And began.
+    <div class="controls">
+      <button onclick="fetchData()">Refresh Data</button>
+      <button onclick="toggleTheme()">Toggle Theme</button>
     </div>
 
-    <!-- Page numbers are placeholders; you can add more dynamically if expanding -->
-    <div class="page-number">Page 1 of [total]</div>
+    <div id="loading" class="loading">Loading draft data...</div>
+    <div id="error" class="error" style="display:none;"></div>
+    <table id="draftTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Position</th>
+          <th>School</th>
+          <th>Avg Rank</th>
+          <th>PFF</th>
+          <th>PFN</th>
+          <th>CBS</th>
+          <th>Kiper</th>
+          <th>Jeremiah</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <div id="lastUpdated" class="last-updated"></div>
   </div>
 
   <script>
+    // Theme toggle
     function toggleTheme() {
       const body = document.body;
-      if (body.getAttribute('data-theme') === 'dark') {
-        body.setAttribute('data-theme', 'light');
-      } else {
-        body.setAttribute('data-theme', 'dark');
+      body.getAttribute('data-theme') === 'dark' 
+        ? body.setAttribute('data-theme', 'light') 
+        : body.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', body.getAttribute('data-theme'));
+    }
+
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.setAttribute('data-theme', 'light');
+    }
+
+    // Fetch function (using CORS proxy for cross-origin)
+    const proxy = 'https://corsproxy.io/?';
+
+    async function fetchData() {
+      const loading = document.getElementById('loading');
+      const errorDiv = document.getElementById('error');
+      const table = document.getElementById('draftTable');
+      const tbody = document.getElementById('tableBody');
+
+      loading.style.display = 'block';
+      errorDiv.style.display = 'none';
+      table.style.display = 'none';
+      tbody.innerHTML = '';
+
+      try {
+        // Example sources (update URLs as needed; these are real as of Jan 2026)
+        const sources = [
+          { name: 'PFF', url: 'https://www.pff.com/news/draft-2026-nfl-draft-big-board' },
+          { name: 'PFN', url: 'https://www.profootballnetwork.com/2026-nfl-draft-big-board' },
+          { name: 'CBS', url: 'https://www.cbssports.com/nfl/draft/news/2026-nfl-draft-big-board-top-50-prospects/' },
+          // Add more: Kiper, Jeremiah, etc. – find current URLs via search
+        ];
+
+        let allPlayers = [];
+
+        for (const source of sources) {
+          const response = await fetch(proxy + encodeURIComponent(source.url));
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // Site-specific parsing (this is simplified; adjust selectors per site)
+          // Example for PFF-style table (inspect page to get exact class)
+          const rows = doc.querySelectorAll('table tr'); // or '.player-row', etc.
+          rows.forEach((row, index) => {
+            if (index === 0) return; // skip header
+            const cells = row.querySelectorAll('td');
+            if (cells.length < 3) return;
+
+            const rank = cells[0]?.textContent.trim() || '';
+            const name = cells[1]?.textContent.trim() || '';
+            const posSchool = cells[2]?.textContent.trim() || '';
+            const [pos, school] = posSchool.split(' - ') || ['', ''];
+
+            allPlayers.push({ source: source.name, rank: parseInt(rank) || null, name, pos, school });
+          });
+        }
+
+        // Aggregate by player name (simple average rank)
+        const playerMap = {};
+        allPlayers.forEach(p => {
+          if (!p.name) return;
+          if (!playerMap[p.name]) {
+            playerMap[p.name] = { name: p.name, pos: p.pos, school: p.school, ranks: [] };
+          }
+          if (p.rank) playerMap[p.name].ranks.push(p.rank);
+        });
+
+        const aggregated = Object.values(playerMap).map(p => {
+          const avg = p.ranks.length ? (p.ranks.reduce((a,b)=>a+b,0)/p.ranks.length).toFixed(1) : 'N/A';
+          return { ...p, avgRank: avg };
+        }).sort((a,b) => a.avgRank - b.avgRank);
+
+        // Render table
+        aggregated.forEach((p, index) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${p.name}</td>
+            <td>${p.pos || 'N/A'}</td>
+            <td>${p.school || 'N/A'}</td>
+            <td><strong>${p.avgRank}</strong></td>
+            <td>${p.ranks.find(r => r.source === 'PFF')?.rank || 'N/A'}</td>
+            <td>${p.ranks.find(r => r.source === 'PFN')?.rank || 'N/A'}</td>
+            <td>${p.ranks.find(r => r.source === 'CBS')?.rank || 'N/A'}</td>
+            <td>N/A</td>
+            <td>N/A</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        loading.style.display = 'none';
+        table.style.display = 'table';
+        document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+      } catch (err) {
+        loading.style.display = 'none';
+        errorDiv.textContent = 'Error loading data: ' + err.message + '. Some sites may block requests. Try refreshing or check console.';
+        errorDiv.style.display = 'block';
       }
     }
 
-    // Optional typewriter effect (remove if you don't want it)
-    const content = document.getElementById('typewriter');
-    const text = content.innerHTML;
-    content.innerHTML = '';
-    let i = 0;
-    function typeWriter() {
-      if (i < text.length) {
-        content.innerHTML += text.charAt(i);
-        i++;
-        setTimeout(typeWriter, 15); // speed of typing
-      }
-    }
-    setTimeout(typeWriter, 500); // delay before starting
+    // Load on page open
+    window.onload = fetchData;
   </script>
 </body>
 </html>
