@@ -1,13 +1,14 @@
-// script.js - Updated 2026 NFL Draft Big Board Fetcher with ALL sources from spreadsheet
+// script.js - Full 2026 NFL Draft Big Board Fetcher with ALL spreadsheet sources
 
-// CORS proxies (rotate to avoid blocks)
+// CORS proxies (more = better chance of success)
 const proxies = [
   'https://corsproxy.io/?',
   'https://api.allorigins.win/raw?url=',
-  'https://crossorigin.me/'
+  'https://crossorigin.me/',
+  'https://thingproxy.freeboard.io/fetch/'
 ];
 
-// All sources from your spreadsheet (URLs as of Jan 6, 2026 - update if changed)
+// All sources from your spreadsheet (URLs current as of Jan 6, 2026)
 const sources = [
   { name: 'PFF', url: 'https://www.pff.com/news/draft-2026-nfl-draft-big-board' },
   { name: 'Draft Scout', url: 'https://www.nfldraftscout.com/rankings/big-board/2026' },
@@ -16,15 +17,15 @@ const sources = [
   { name: 'Daniel Jeremiah', url: 'https://www.nfl.com/news/daniel-jeremiah-2026-nfl-draft-big-board-top-50-prospects' },
   { name: 'NFL Draft Buzz', url: 'https://www.nfldraftbuzz.com/2026-nfl-draft-big-board' },
   { name: 'Walter Camp Football', url: 'https://waltercamp.org/2026-nfl-draft-big-board' },
-  { name: 'ESPN', url: 'https://www.espn.com/nfl/draft2026' }, // general page; may need specific board link
+  { name: 'ESPN', url: 'https://www.espn.com/nfl/draft2026' },
   { name: 'CBS', url: 'https://www.cbssports.com/nfl/draft/news/renners-2026-nfl-draft-big-board-top-150-prospects/' },
   { name: 'Fantasy Pros', url: 'https://www.fantasypros.com/nfl/draft/big-board.php?year=2026' },
-  { name: 'Dan Brugler', url: 'https://theathletic.com/nfl/draft/2026-nfl-draft-big-board' }, // The Athletic link
-  { name: 'USA Today', url: 'https://www.usatoday.com/story/sports/nfl/draft/2026/01/01/nfl-draft-2026-big-board/' },
+  { name: 'Dan Brugler', url: 'https://theathletic.com/nfl/draft/2026-nfl-draft-big-board' },
+  { name: 'USA Today', url: 'https://www.usatoday.com/story/sports/nfl/draft/2026/01/04/2026-nfl-draft-big-board-top-32/88010069007/' },
   { name: 'Sporting News', url: 'https://www.sportingnews.com/us/nfl/news/2026-nfl-mock-draft-big-board-top-prospects/1j8k9p0zq0q0q0q0q0q0q0' }
 ];
 
-// Main fetch function
+// Fetch & parse
 async function fetchData() {
   const loading = document.getElementById('loading');
   const errorDiv = document.getElementById('error');
@@ -50,32 +51,33 @@ async function fetchData() {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
-        // Expanded selectors - tries multiple common patterns
-        let rows = doc.querySelectorAll('table tr, .player-row, li.player, .prospect, .big-board-item, .player-card, div[class*="player"], div[class*="prospect"], .ranking-item');
+        // Broad selectors for rows/lists
+        let rows = doc.querySelectorAll('table tr, .player-row, li.player, .prospect, .big-board-item, .player-card, div[class*="player"], div[class*="prospect"], .ranking-item, li, tr');
         if (rows.length === 0) {
-          rows = doc.querySelectorAll('li, div, p'); // very broad fallback
+          console.warn(`${source.name}: No rows found. Broad fallback used.`);
         }
 
         rows.forEach(row => {
-          const text = row.textContent.trim();
-          if (!text || text.includes('Rank') || text.includes('Player') || text.includes('Position') || text.length < 15) return;
+          const text = row.textContent.trim().replace(/\s+/g, ' ');
+          if (!text || text.length < 20 || /Rank|Player|Position|School/i.test(text)) return;
 
-          // Flexible parsing for various formats
-          const match = text.match(/(\d{1,3}(?:\.\d)?\.?\s*)([\w\s\.\-']+?)\s*(EDGE|QB|CB|S|OT|WR|RB|LB|DT|TE|OL|DL|DE|ILB|OLB|SAF|K|P|SAFETY|CORNER|GUARD|TACKLE|CENTER)\s*(.+)/i);
+          // Flexible parsing
+          const match = text.match(/(\d{1,3}(?:\.\d)?\.?\s*)([\w\s\.\-']+?)\s*(EDGE|QB|CB|S|OT|WR|RB|LB|DT|TE|OL|DL|DE|ILB|OLB|SAF|K|P|SAFETY|CORNER|GUARD|TACKLE|CENTER)\s*(.+?)(?:\s*\(|\s*$)/i);
           if (match) {
-            const rankStr = match[1].trim().replace(/[\.\s]/g, '');
-            const rank = parseFloat(rankStr) || null;
+            const rank = parseFloat(match[1].trim().replace(/[\.\s]/g, '')) || null;
             const name = match[2].trim();
             const pos = match[3].toUpperCase();
             let school = match[4].trim();
-            school = school.split('(')[0].split('-')[0].split(/vs|at|vs\./i)[0].trim(); // clean up
+            school = school.split('(')[0].split('-')[0].split(/vs\.?|at\s/g)[0].trim();
 
-            allPlayers.push({ source: source.name, rank, name, pos, school });
-            success = true;
+            if (name && pos && rank) {
+              allPlayers.push({ source: source.name, rank, name, pos, school });
+              success = true;
+            }
           }
         });
 
-        if (success && rows.length > 5) break; // good data, skip other proxies
+        if (success) break;
 
       } catch (err) {
         console.warn(`Failed ${source.name} via ${proxy}:`, err);
@@ -83,7 +85,7 @@ async function fetchData() {
     }
   }
 
-  // Aggregate by player (case-insensitive key)
+  // Aggregate
   const playerMap = {};
   allPlayers.forEach(p => {
     if (!p.name || !p.rank) return;
@@ -104,7 +106,7 @@ async function fetchData() {
     return aVal - bVal;
   });
 
-  // Render table
+  // Render
   aggregated.forEach((p, index) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -126,7 +128,7 @@ async function fetchData() {
     table.style.display = 'table';
     document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString()} (from ${sources.length} sources)`;
   } else {
-    errorDiv.textContent = 'No data could be loaded. Sites may block requests, use anti-bot protection, or have changed layout. Open browser console (F12) for details. Try again later.';
+    errorDiv.textContent = 'No data loaded. Sites may block requests or have changed layout. Check console (F12) for details. Mock data shown below.';
     errorDiv.style.display = 'block';
   }
 }
