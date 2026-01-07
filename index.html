@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>2026 NFL Draft Tracker</title>
+  <title>2026 NFL Draft Big Board</title>
   <style>
     :root {
       --bg: #0f0f0f;
@@ -93,16 +93,14 @@
     tr:hover {
       background: var(--table-hover);
     }
-    .loading {
+    .loading, .error {
       text-align: center;
       padding: 3rem;
       font-size: 1.2rem;
       opacity: 0.8;
     }
     .error {
-      color: #ff4d4d;
-      text-align: center;
-      padding: 2rem;
+      color: var(--accent);
     }
     .last-updated {
       font-size: 0.9rem;
@@ -116,8 +114,8 @@
 
   <div class="container">
     <header>
-      <h1>2026 NFL Draft Tracker</h1>
-      <div class="subtitle">Daily Big Board Aggregator – Round 1</div>
+      <h1>2026 NFL Draft Big Board</h1>
+      <div class="subtitle">Aggregated from PFF, PFN, CBS, Kiper & more | Round 1 Focus</div>
     </header>
 
     <div class="controls">
@@ -125,14 +123,14 @@
       <button onclick="toggleTheme()">Toggle Theme</button>
     </div>
 
-    <div id="loading" class="loading">Loading draft data...</div>
+    <div id="loading" class="loading">Loading draft data... (may take a few seconds)</div>
     <div id="error" class="error" style="display:none;"></div>
     <table id="draftTable" style="display:none;">
       <thead>
         <tr>
           <th>Rank</th>
           <th>Name</th>
-          <th>Position</th>
+          <th>Pos</th>
           <th>School</th>
           <th>Avg Rank</th>
           <th>PFF</th>
@@ -152,10 +150,9 @@
     // Theme toggle
     function toggleTheme() {
       const body = document.body;
-      body.getAttribute('data-theme') === 'dark' 
-        ? body.setAttribute('data-theme', 'light') 
-        : body.setAttribute('data-theme', 'dark');
-      localStorage.setItem('theme', body.getAttribute('data-theme'));
+      const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
     }
 
     // Load saved theme
@@ -163,9 +160,7 @@
       document.body.setAttribute('data-theme', 'light');
     }
 
-    // Fetch function (using CORS proxy for cross-origin)
-    const proxy = 'https://corsproxy.io/?';
-
+    // Placeholder fetch function (will be expanded in next JS file)
     async function fetchData() {
       const loading = document.getElementById('loading');
       const errorDiv = document.getElementById('error');
@@ -177,82 +172,34 @@
       table.style.display = 'none';
       tbody.innerHTML = '';
 
-      try {
-        // Example sources (update URLs as needed; these are real as of Jan 2026)
-        const sources = [
-          { name: 'PFF', url: 'https://www.pff.com/news/draft-2026-nfl-draft-big-board' },
-          { name: 'PFN', url: 'https://www.profootballnetwork.com/2026-nfl-draft-big-board' },
-          { name: 'CBS', url: 'https://www.cbssports.com/nfl/draft/news/2026-nfl-draft-big-board-top-50-prospects/' },
-          // Add more: Kiper, Jeremiah, etc. – find current URLs via search
-        ];
+      // Simulated data for now (replace with real fetch later)
+      const mockData = [
+        { rank: 1, name: "Rueben Bain Jr.", pos: "EDGE", school: "Miami (FL)", avg: "4.8", pff: 1, pfn: 1, cbs: 3, kiper: "N/A", jeremiah: "N/A" },
+        { rank: 2, name: "Caleb Downs", pos: "S", school: "Ohio State", avg: "5.5", pff: 2, pfn: 7, cbs: 9, kiper: 11, jeremiah: "N/A" },
+        { rank: 3, name: "Fernando Mendoza", pos: "QB", school: "Indiana", avg: "3.75", pff: "N/A", pfn: 2, cbs: 1, kiper: 2, jeremiah: "N/A" },
+        // Add more mock rows as needed
+      ];
 
-        let allPlayers = [];
+      mockData.forEach((p, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${p.name}</td>
+          <td>${p.pos}</td>
+          <td>${p.school}</td>
+          <td><strong>${p.avg}</strong></td>
+          <td>${p.pff}</td>
+          <td>${p.pfn}</td>
+          <td>${p.cbs}</td>
+          <td>${p.kiper}</td>
+          <td>${p.jeremiah}</td>
+        `;
+        tbody.appendChild(tr);
+      });
 
-        for (const source of sources) {
-          const response = await fetch(proxy + encodeURIComponent(source.url));
-          const html = await response.text();
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-
-          // Site-specific parsing (this is simplified; adjust selectors per site)
-          // Example for PFF-style table (inspect page to get exact class)
-          const rows = doc.querySelectorAll('table tr'); // or '.player-row', etc.
-          rows.forEach((row, index) => {
-            if (index === 0) return; // skip header
-            const cells = row.querySelectorAll('td');
-            if (cells.length < 3) return;
-
-            const rank = cells[0]?.textContent.trim() || '';
-            const name = cells[1]?.textContent.trim() || '';
-            const posSchool = cells[2]?.textContent.trim() || '';
-            const [pos, school] = posSchool.split(' - ') || ['', ''];
-
-            allPlayers.push({ source: source.name, rank: parseInt(rank) || null, name, pos, school });
-          });
-        }
-
-        // Aggregate by player name (simple average rank)
-        const playerMap = {};
-        allPlayers.forEach(p => {
-          if (!p.name) return;
-          if (!playerMap[p.name]) {
-            playerMap[p.name] = { name: p.name, pos: p.pos, school: p.school, ranks: [] };
-          }
-          if (p.rank) playerMap[p.name].ranks.push(p.rank);
-        });
-
-        const aggregated = Object.values(playerMap).map(p => {
-          const avg = p.ranks.length ? (p.ranks.reduce((a,b)=>a+b,0)/p.ranks.length).toFixed(1) : 'N/A';
-          return { ...p, avgRank: avg };
-        }).sort((a,b) => a.avgRank - b.avgRank);
-
-        // Render table
-        aggregated.forEach((p, index) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${p.name}</td>
-            <td>${p.pos || 'N/A'}</td>
-            <td>${p.school || 'N/A'}</td>
-            <td><strong>${p.avgRank}</strong></td>
-            <td>${p.ranks.find(r => r.source === 'PFF')?.rank || 'N/A'}</td>
-            <td>${p.ranks.find(r => r.source === 'PFN')?.rank || 'N/A'}</td>
-            <td>${p.ranks.find(r => r.source === 'CBS')?.rank || 'N/A'}</td>
-            <td>N/A</td>
-            <td>N/A</td>
-          `;
-          tbody.appendChild(tr);
-        });
-
-        loading.style.display = 'none';
-        table.style.display = 'table';
-        document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString()}`;
-
-      } catch (err) {
-        loading.style.display = 'none';
-        errorDiv.textContent = 'Error loading data: ' + err.message + '. Some sites may block requests. Try refreshing or check console.';
-        errorDiv.style.display = 'block';
-      }
+      loading.style.display = 'none';
+      table.style.display = 'table';
+      document.getElementById('lastUpdated').textContent = `Last updated: ${new Date().toLocaleString()}`;
     }
 
     // Load on page open
