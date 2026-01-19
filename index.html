@@ -24,7 +24,7 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
 
     const SPORT = "nfl";
     const DEFAULT_LEAGUE_SEASON = "2026";
@@ -52,6 +52,15 @@
       return res.json();
     }
 
+    // Read URL parameters
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        username: params.get('username') || '',
+        season: params.get('season') || DEFAULT_LEAGUE_SEASON
+      };
+    }
+
     const DraftBoard = () => {
       const [numTeams] = useState(16);
       const [numRounds] = useState(7);
@@ -62,16 +71,19 @@
       const [draftPicks, setDraftPicks] = useState({});
       const [selectedPickSlot, setSelectedPickSlot] = useState(null);
       
+      // Get URL params on mount
+      const urlParams = getUrlParams();
+      
       const [sleeperUsername, setSleeperUsername] = useState(() => {
-        return localStorage.getItem(LS_LOCKED_USERNAME) || 'skjjcruz';
+        return urlParams.username || localStorage.getItem(LS_LOCKED_USERNAME) || 'skjjcruz';
       });
       const [sleeperUserId, setSleeperUserId] = useState(null);
       const [userLeagues, setUserLeagues] = useState([]);
       const [selectedLeague, setSelectedLeague] = useState(null);
-      const [leagueSeason, setLeagueSeason] = useState(DEFAULT_LEAGUE_SEASON);
+      const [leagueSeason, setLeagueSeason] = useState(urlParams.season || DEFAULT_LEAGUE_SEASON);
       const [statsSeason, setStatsSeason] = useState(DEFAULT_STATS_SEASON);
       const [loading, setLoading] = useState(false);
-      const [status, setStatus] = useState('Enter Sleeper username and click Reload');
+      const [status, setStatus] = useState('Loading from dashboard...');
       
       // Draft history
       const [availableDrafts, setAvailableDrafts] = useState([]);
@@ -80,6 +92,17 @@
       const [sleeperPlayers, setSleeperPlayers] = useState(null);
       const [leagueRosters, setLeagueRosters] = useState([]);
       const [leagueUsers, setLeagueUsers] = useState([]);
+
+      // Auto-load on mount if we have URL params
+      useEffect(() => {
+        if (urlParams.username) {
+          fetchSleeperUser(urlParams.username);
+        } else if (localStorage.getItem(LS_LOCKED_USERNAME)) {
+          fetchSleeperUser(localStorage.getItem(LS_LOCKED_USERNAME));
+        } else {
+          setStatus('Enter Sleeper username and click Reload');
+        }
+      }, []);
 
       const fetchSleeperUser = async (username) => {
         if (!username) {
@@ -242,6 +265,16 @@
         fetchSleeperUser(sleeperUsername);
       };
 
+      const handleBackToDashboard = () => {
+        // Close this tab/window if it was opened by the dashboard
+        if (window.opener) {
+          window.close();
+        } else {
+          // Otherwise navigate back to the dashboard
+          window.location.href = 'index.html';
+        }
+      };
+
       const generateDraftOrder = () => {
         const order = [];
         for (let round = 1; round <= numRounds; round++) {
@@ -384,9 +417,16 @@
               <button 
                 onClick={handleReload}
                 disabled={loading || !sleeperUsername}
-                className="ml-auto px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-slate-900 rounded text-sm font-bold"
+                className="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-slate-900 rounded text-sm font-bold"
               >
                 {loading ? 'Loading...' : 'Reload'}
+              </button>
+
+              <button 
+                onClick={handleBackToDashboard}
+                className="ml-auto px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-100 rounded text-sm font-bold"
+              >
+                ← Back to Dashboard
               </button>
             </div>
 
