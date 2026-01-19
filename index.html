@@ -72,6 +72,11 @@
       const [statsSeason, setStatsSeason] = useState(DEFAULT_STATS_SEASON);
       const [loading, setLoading] = useState(false);
       const [status, setStatus] = useState('Enter Sleeper username and click Reload');
+      
+      // Draft history
+      const [availableDrafts, setAvailableDrafts] = useState([]);
+      const [selectedDraft, setSelectedDraft] = useState(null);
+      const [draftYear, setDraftYear] = useState(null);
 
       const fetchSleeperUser = async (username) => {
         if (!username) {
@@ -115,6 +120,10 @@
           if (psycho) auto = psycho;
           
           setSelectedLeague(auto);
+          
+          // Load drafts for selected league
+          await loadDraftsForLeague(auto.id);
+          
           setStatus(`Leagues loaded ✅ - ${mappedLeagues.length} league(s) found`);
           
         } catch (err) {
@@ -123,6 +132,87 @@
         } finally {
           setLoading(false);
         }
+      };
+
+      const loadDraftsForLeague = async (leagueId) => {
+        if (!leagueId) return;
+        
+        try {
+          setStatus('Loading draft history…');
+          const draftsData = await fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/drafts`);
+          
+          if (!draftsData || draftsData.length === 0) {
+            setAvailableDrafts([]);
+            setSelectedDraft(null);
+            setDraftYear(null);
+            setStatus('No drafts found for this league.');
+            return;
+          }
+          
+          // Sort drafts by most recent first
+          const sortedDrafts = draftsData.sort((a, b) => {
+            return Number(b.season || 0) - Number(a.season || 0);
+          });
+          
+          setAvailableDrafts(sortedDrafts);
+          
+          // Auto-select most recent draft
+          const mostRecent = sortedDrafts[0];
+          setSelectedDraft(mostRecent);
+          setDraftYear(mostRecent.season);
+          
+          // Load picks for this draft
+          await loadDraftPicks(mostRecent.draft_id);
+          
+        } catch (err) {
+          console.error('Error loading drafts:', err);
+          setStatus('Failed to load draft history.');
+        }
+      };
+
+      const loadDraftPicks = async (draftId) => {
+        if (!draftId) return;
+        
+        try {
+          setStatus('Loading draft picks…');
+          const picksData = await fetchJSON(`https://api.sleeper.app/v1/draft/${draftId}/picks`);
+          
+          if (!picksData || picksData.length === 0) {
+            setDraftPicks({});
+            setStatus('No picks found for this draft.');
+            return;
+          }
+          
+          // Map picks to our format
+          const mappedPicks = {};
+          picksData.forEach(pick => {
+            const key = `${pick.round}.${String(pick.draft_slot).padStart(2, '0')}`;
+            // Store the player_id (we'll need to fetch player data later)
+            mappedPicks[key] = pick.player_id;
+          });
+          
+          setDraftPicks(mappedPicks);
+          setStatus(`Draft loaded ✅ - ${picksData.length} picks`);
+          
+        } catch (err) {
+          console.error('Error loading picks:', err);
+          setStatus('Failed to load draft picks.');
+        }
+      };
+
+      const handleDraftYearChange = (year) => {
+        const draft = availableDrafts.find(d => d.season === year);
+        if (draft) {
+          setSelectedDraft(draft);
+          setDraftYear(year);
+          loadDraftPicks(draft.draft_id);
+        }
+      };
+
+      const handleLeagueChange = (leagueId) => {
+        const league = userLeagues.find(l => l.id === leagueId);
+        setSelectedLeague(league);
+        loadDraftsForLeague(leagueId);
       };
 
       const handleReload = () => {
@@ -234,10 +324,7 @@
                 <label className="text-sm text-slate-400">League:</label>
                 <select 
                   value={selectedLeague?.id || ''}
-                  onChange={(e) => {
-                    const league = userLeagues.find(l => l.id === e.target.value);
-                    setSelectedLeague(league);
-                  }}
+                  onChange={(e) => handleLeagueChange(e.target.value)}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 min-w-[200px]"
                   disabled={loading || userLeagues.length === 0}
                 >
@@ -246,6 +333,26 @@
                   ) : (
                     userLeagues.map(league => (
                       <option key={league.id} value={league.id}>{league.name}</option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-slate-400">Draft Year:</label>
+                <select 
+                  value={draftYear || ''}
+                  onChange={(e) => handleDraftYearChange(e.target.value)}
+                  className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100"
+                  disabled={loading || availableDrafts.length === 0}
+                >
+                  {availableDrafts.length === 0 ? (
+                    <option value="">No drafts</option>
+                  ) : (
+                    availableDrafts.map(draft => (
+                      <option key={draft.draft_id} value={draft.season}>
+                        {draft.season} {draft.status === 'complete' ? '(Complete)' : draft.status === 'in_progress' ? '(In Progress)' : '(Not Started)'}
+                      </option>
                     ))
                   )}
                 </select>
@@ -267,7 +374,16 @@
 
           <div className="sticky top-0 z-50 bg-slate-900 border-b border-slate-700 p-4">
             <div className="flex flex-wrap gap-4 items-center justify-between">
-              <h1 className="text-xl font-bold text-yellow-500">Draft Board v2.0</h1>
+              <h1 className="text-xl font-bold text-yellow-500">
+                Draft Board v2.0
+                {draftYear && selectedDraft && (
+                  <span className="ml-3 text-sm text-slate-400 font-normal">
+                    📜 Viewing {draftYear} Draft
+                    {selectedDraft.status === 'complete' && ' (Complete)'}
+                    {selectedDraft.status === 'in_progress' && ' (In Progress)'}
+                  </span>
+                )}
+              </h1>
               <div className="flex gap-4 items-center text-sm text-slate-400">
                 <span>16 Teams • 7 Rounds • Snake Draft</span>
                 <button 
