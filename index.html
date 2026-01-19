@@ -266,13 +266,8 @@
       };
 
       const handleBackToDashboard = () => {
-        // Close this tab/window if it was opened by the dashboard
-        if (window.opener) {
-          window.close();
-        } else {
-          // Otherwise navigate back to the dashboard
-          window.location.href = 'index.html';
-        }
+        // Always navigate back to the dashboard URL
+        window.location.href = 'https://skjjcruz.github.io/owner-dashboard-v3/';
       };
 
       const generateDraftOrder = () => {
