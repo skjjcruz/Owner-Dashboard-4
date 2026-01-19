@@ -26,11 +26,10 @@
   <script type="text/babel">
     const { useState } = React;
 
-    const mockLeagues = [
-      { id: 1, name: 'The Psycho League: Year VI', type: 'dynasty' },
-      { id: 2, name: 'Dynasty Warriors 2026', type: 'dynasty' },
-      { id: 3, name: 'Redraft Champions', type: 'redraft' },
-    ];
+    const SPORT = "nfl";
+    const DEFAULT_LEAGUE_SEASON = "2026";
+    const DEFAULT_STATS_SEASON = "2025";
+    const LS_LOCKED_USERNAME = "draft_board_v2_username";
 
     const mockPlayers = [
       { id: 1, name: 'Cameron Ward', pos: 'QB', school: 'Miami', size: '6\'2"', weight: 223, speed: 4.58, tier: 1 },
@@ -47,6 +46,12 @@
 
     const positions = ['QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'K'];
 
+    async function fetchJSON(url) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
     const DraftBoard = () => {
       const [numTeams] = useState(16);
       const [numRounds] = useState(7);
@@ -57,11 +62,72 @@
       const [draftPicks, setDraftPicks] = useState({});
       const [selectedPickSlot, setSelectedPickSlot] = useState(null);
       
-      const [sleeperUsername, setSleeperUsername] = useState('skjjcruz');
-      const [userLeagues, setUserLeagues] = useState(mockLeagues);
-      const [selectedLeague, setSelectedLeague] = useState(mockLeagues[0]);
-      const [leagueSeason, setLeagueSeason] = useState(2026);
-      const [statsSeason, setStatsSeason] = useState(2025);
+      const [sleeperUsername, setSleeperUsername] = useState(() => {
+        return localStorage.getItem(LS_LOCKED_USERNAME) || 'skjjcruz';
+      });
+      const [sleeperUserId, setSleeperUserId] = useState(null);
+      const [userLeagues, setUserLeagues] = useState([]);
+      const [selectedLeague, setSelectedLeague] = useState(null);
+      const [leagueSeason, setLeagueSeason] = useState(DEFAULT_LEAGUE_SEASON);
+      const [statsSeason, setStatsSeason] = useState(DEFAULT_STATS_SEASON);
+      const [loading, setLoading] = useState(false);
+      const [status, setStatus] = useState('Enter Sleeper username and click Reload');
+
+      const fetchSleeperUser = async (username) => {
+        if (!username) {
+          setStatus('Enter a Sleeper username.');
+          return;
+        }
+        
+        setLoading(true);
+        
+        try {
+          setStatus('Loading Sleeper user…');
+          const userData = await fetchJSON(`https://api.sleeper.app/v1/user/${encodeURIComponent(username)}`);
+          setSleeperUserId(userData.user_id);
+          localStorage.setItem(LS_LOCKED_USERNAME, username);
+          
+          setStatus('Loading leagues…');
+          const leaguesData = await fetchJSON(
+            `https://api.sleeper.app/v1/user/${userData.user_id}/leagues/${SPORT}/${leagueSeason}`
+          );
+          
+          if (!leaguesData || leaguesData.length === 0) {
+            setStatus('No leagues found for that season.');
+            setUserLeagues([]);
+            return;
+          }
+          
+          const mappedLeagues = leaguesData.map(league => ({
+            id: league.league_id,
+            name: league.name,
+            type: league.settings?.type || 'redraft',
+            totalRosters: league.total_rosters,
+            season: league.season,
+            status: league.status,
+            draftId: league.draft_id
+          }));
+          
+          setUserLeagues(mappedLeagues);
+          
+          let auto = mappedLeagues[0];
+          const psycho = mappedLeagues.find(l => (l.name || '').toLowerCase().includes('psycho'));
+          if (psycho) auto = psycho;
+          
+          setSelectedLeague(auto);
+          setStatus(`Leagues loaded ✅ - ${mappedLeagues.length} league(s) found`);
+          
+        } catch (err) {
+          setStatus(`Error: ${err.message}`);
+          console.error('Sleeper API Error:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleReload = () => {
+        fetchSleeperUser(sleeperUsername);
+      };
 
       const generateDraftOrder = () => {
         const order = [];
@@ -131,9 +197,10 @@
             <div className="flex flex-wrap gap-4 items-center">
               <input
                 type="text"
-                placeholder="skjjcruz"
+                placeholder="Sleeper username"
                 value={sleeperUsername}
                 onChange={(e) => setSleeperUsername(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleReload()}
                 className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 w-32"
               />
 
@@ -141,10 +208,10 @@
                 <label className="text-sm text-slate-400">League Season:</label>
                 <select 
                   value={leagueSeason}
-                  onChange={(e) => setLeagueSeason(Number(e.target.value))}
+                  onChange={(e) => setLeagueSeason(e.target.value)}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100"
                 >
-                  {[2026, 2025, 2024, 2023].map(year => (
+                  {['2026', '2025', '2024', '2023'].map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
@@ -154,10 +221,10 @@
                 <label className="text-sm text-slate-400">Stats Season:</label>
                 <select 
                   value={statsSeason}
-                  onChange={(e) => setStatsSeason(Number(e.target.value))}
+                  onChange={(e) => setStatsSeason(e.target.value)}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100"
                 >
-                  {[2025, 2024, 2023, 2022].map(year => (
+                  {['2025', '2024', '2023', '2022'].map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
@@ -166,28 +233,35 @@
               <div className="flex items-center gap-2">
                 <label className="text-sm text-slate-400">League:</label>
                 <select 
-                  value={selectedLeague.id}
+                  value={selectedLeague?.id || ''}
                   onChange={(e) => {
-                    const league = userLeagues.find(l => l.id === Number(e.target.value));
+                    const league = userLeagues.find(l => l.id === e.target.value);
                     setSelectedLeague(league);
                   }}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 min-w-[200px]"
+                  disabled={loading || userLeagues.length === 0}
                 >
-                  {userLeagues.map(league => (
-                    <option key={league.id} value={league.id}>{league.name}</option>
-                  ))}
+                  {userLeagues.length === 0 ? (
+                    <option value="">No leagues</option>
+                  ) : (
+                    userLeagues.map(league => (
+                      <option key={league.id} value={league.id}>{league.name}</option>
+                    ))
+                  )}
                 </select>
               </div>
 
               <button 
-                className="ml-auto px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-slate-900 rounded text-sm font-bold"
+                onClick={handleReload}
+                disabled={loading || !sleeperUsername}
+                className="ml-auto px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-slate-900 rounded text-sm font-bold"
               >
-                Reload
+                {loading ? 'Loading...' : 'Reload'}
               </button>
             </div>
 
             <div className="mt-2 text-xs text-slate-500">
-              Ready ✅ (Tap L / R on a team) — League {leagueSeason}, Stats {statsSeason}, Week 3
+              {status}
             </div>
           </div>
 
