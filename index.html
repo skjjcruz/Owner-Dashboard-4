@@ -212,8 +212,14 @@
               <div className="flex items-center gap-2">
                 <input
                   type="text"
-                  placeholder="skjjcruz"
-                  defaultValue="skjjcruz"
+                  placeholder="Sleeper username"
+                  value={sleeperUsername}
+                  onChange={(e) => setSleeperUsername(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      fetchSleeperUser(sleeperUsername);
+                    }
+                  }}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 w-32"
                 />
               </div>
@@ -222,7 +228,13 @@
                 <label className="text-sm text-slate-400">League Season:</label>
                 <select 
                   value={leagueSeason}
-                  onChange={(e) => setLeagueSeason(Number(e.target.value))}
+                  onChange={(e) => {
+                    const newSeason = Number(e.target.value);
+                    setLeagueSeason(newSeason);
+                    if (sleeperUserId) {
+                      fetchSleeperUser(sleeperUsername);
+                    }
+                  }}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100"
                 >
                   {[2026, 2025, 2024, 2023].map(year => (
@@ -249,26 +261,36 @@
                 <select 
                   value={selectedLeague.id}
                   onChange={(e) => {
-                    const league = mockLeagues.find(l => l.id === Number(e.target.value));
+                    const league = userLeagues.find(l => l.id === e.target.value);
                     setSelectedLeague(league);
+                    fetchLeagueData(league.id);
                   }}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 min-w-[200px]"
+                  disabled={loading}
                 >
-                  {mockLeagues.map(league => (
+                  {userLeagues.map(league => (
                     <option key={league.id} value={league.id}>{league.name}</option>
                   ))}
                 </select>
               </div>
 
               <button 
-                className="ml-auto px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-slate-900 rounded text-sm font-bold"
+                onClick={() => fetchSleeperUser(sleeperUsername)}
+                disabled={loading || !sleeperUsername}
+                className="ml-auto px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-slate-900 rounded text-sm font-bold"
               >
-                Reload
+                {loading ? 'Loading...' : 'Reload'}
               </button>
             </div>
 
             <div className="mt-2 text-xs text-slate-500">
-              Ready ✅ (Tap L / R on a team) — League {leagueSeason}, Stats {statsSeason}, Week 3
+              {error ? (
+                <span className="text-red-500">Error: {error}</span>
+              ) : sleeperUserId ? (
+                <span>Ready ✅ (Tap L / R on a team) — League {leagueSeason}, Stats {statsSeason}, Week 3</span>
+              ) : (
+                <span>Enter your Sleeper username and press Enter or click Reload</span>
+              )}
             </div>
           </div>
 
