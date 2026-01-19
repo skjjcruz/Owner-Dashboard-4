@@ -26,6 +26,13 @@
   <script type="text/babel">
     const { useState } = React;
 
+    // Mock leagues data
+    const mockLeagues = [
+      { id: 1, name: 'The Psycho League: Year VI' },
+      { id: 2, name: 'Dynasty Warriors 2026' },
+      { id: 3, name: 'Redraft Champions' },
+    ];
+
     // Mock player data
     const mockPlayers = [
       { id: 1, name: 'Cameron Ward', pos: 'QB', school: 'Miami', size: '6\'2"', weight: 223, speed: 4.5, tier: 1 },
@@ -75,6 +82,9 @@
       const [players] = useState(mockPlayers);
       const [draftPicks, setDraftPicks] = useState({});
       const [selectedPickSlot, setSelectedPickSlot] = useState(null);
+      const [selectedLeague, setSelectedLeague] = useState(mockLeagues[0]);
+      const [leagueSeason, setLeagueSeason] = useState(2026);
+      const [statsSeason, setStatsSeason] = useState(2025);
 
       const generateDraftOrder = () => {
         const order = [];
@@ -141,6 +151,63 @@
 
       return (
         <div className="min-h-screen bg-slate-950 text-slate-100">
+          {/* League Selection Bar */}
+          <div className="bg-slate-900 border-b border-slate-700 px-4 py-3">
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-slate-400">League Season:</label>
+                <select 
+                  value={leagueSeason}
+                  onChange={(e) => setLeagueSeason(Number(e.target.value))}
+                  className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100"
+                >
+                  {[2026, 2025, 2024, 2023].map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-slate-400">Stats Season:</label>
+                <select 
+                  value={statsSeason}
+                  onChange={(e) => setStatsSeason(Number(e.target.value))}
+                  className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100"
+                >
+                  {[2025, 2024, 2023, 2022].map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-slate-400">League:</label>
+                <select 
+                  value={selectedLeague.id}
+                  onChange={(e) => {
+                    const league = mockLeagues.find(l => l.id === Number(e.target.value));
+                    setSelectedLeague(league);
+                  }}
+                  className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 min-w-[200px]"
+                >
+                  {mockLeagues.map(league => (
+                    <option key={league.id} value={league.id}>{league.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <button 
+                className="ml-auto px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-slate-900 rounded text-sm font-bold"
+              >
+                Reload
+              </button>
+            </div>
+
+            <div className="mt-2 text-xs text-slate-500">
+              Ready ✅ (Tap L / R on a team) — League {leagueSeason}, Stats {statsSeason}, Week 3
+            </div>
+          </div>
+
           <div className="sticky top-0 z-50 bg-slate-900 border-b border-slate-700 p-4">
             <div className="flex flex-wrap gap-4 items-center justify-between">
               <h1 className="text-xl font-bold text-yellow-500">Draft Board v2.0</h1>
@@ -156,7 +223,7 @@
             </div>
           </div>
 
-          <div className="flex gap-4 p-4 h-[calc(100vh-80px)]">
+          <div className="flex gap-4 p-4 h-[calc(100vh-140px)]">
             {/* Draft Board - Left */}
             <div className="w-1/2 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden flex flex-col">
               <div className="bg-slate-800 px-4 py-3 border-b border-slate-700 flex-shrink-0">
