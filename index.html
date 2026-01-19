@@ -26,100 +26,26 @@
   <script type="text/babel">
     const { useState } = React;
 
-    // Mock leagues data
     const mockLeagues = [
-      { id: 1, name: 'The Psycho League: Year VI' },
-      { id: 2, name: 'Dynasty Warriors 2026' },
-      { id: 3, name: 'Redraft Champions' },
+      { id: 1, name: 'The Psycho League: Year VI', type: 'dynasty' },
+      { id: 2, name: 'Dynasty Warriors 2026', type: 'dynasty' },
+      { id: 3, name: 'Redraft Champions', type: 'redraft' },
     ];
 
-    // Mock player data with rankings
     const mockPlayers = [
-      { 
-        id: 1, name: 'Cameron Ward', pos: 'QB', school: 'Miami', size: '6\'2"', weight: 223, speed: 4.58, tier: 1,
-        rankings: { 
-          pff: 1, theAthletic: 2, espn: 1, nflDotCom: 3, pfn: 1, cbs: 2, si: 1, usaToday: 4, 
-          bleacherReport: 2, fantasyPros: 1, melKiper: 1, danielJeremiah: 2, mattMiller: 1, 
-          daneBrugler: 1, jordanReid: 3, trevorSikkema: 1, fieldYates: 2, charlieCampbell: 1,
-          lanceZierlein: 2, chadReuter: 1, buckyBrooks: 3, chrisTrapasso: 2, ericEdholm: 1
-        },
-        stats: { completions: 325, attempts: 480, passYards: 4250, passTDs: 38, ints: 8, rushYards: 285, rushTDs: 5 },
-        scouting: {
-          strengths: "Elite arm strength with ability to make all NFL throws. Shows excellent pocket presence and poise under pressure. Quick release and good ball placement on intermediate routes.",
-          weaknesses: "Needs to improve consistency on deep ball accuracy. Can be too aggressive forcing throws into tight windows. Footwork occasionally gets sloppy when hurried.",
-          comparison: "Matthew Stafford",
-          projection: "Round 1, Pick 1-5"
-        },
-        videoId: "dQw4w9WgXcQ"
-      },
-      { 
-        id: 2, name: 'Shedeur Sanders', pos: 'QB', school: 'Colorado', size: '6\'2"', weight: 215, speed: 4.6, tier: 1,
-        rankings: { 
-          pff: 2, theAthletic: 1, espn: 2, nflDotCom: 2, pfn: 2, cbs: 1, si: 2, usaToday: 3, 
-          bleacherReport: 1, fantasyPros: 2, melKiper: 2, danielJeremiah: 1, mattMiller: 2, 
-          daneBrugler: 3, jordanReid: 1, trevorSikkema: 2, fieldYates: 1, charlieCampbell: 2,
-          lanceZierlein: 1, chadReuter: 2, buckyBrooks: 2, chrisTrapasso: 1, ericEdholm: 2
-        },
-        stats: { completions: 310, attempts: 445, passYards: 3926, passTDs: 35, ints: 6, rushYards: 156, rushTDs: 2 },
-        scouting: {
-          strengths: "Outstanding accuracy and touch on all levels. Excellent pre-snap reads and football IQ. Prototypical pocket passer with great anticipation.",
-          weaknesses: "Limited mobility and athleticism. Needs to add strength to absorb NFL hits. Sometimes holds ball too long looking for perfect throw.",
-          comparison: "Kirk Cousins",
-          projection: "Round 1, Pick 1-10"
-        },
-        videoId: "dQw4w9WgXcQ"
-      },
-      { 
-        id: 3, name: 'Quinn Ewers', pos: 'QB', school: 'Texas', size: '6\'2"', weight: 195, speed: 4.7, tier: 1,
-        rankings: { 
-          pff: 3, theAthletic: 3, espn: 3, nflDotCom: 1, pfn: 3, cbs: 3, si: 3, usaToday: 2, 
-          bleacherReport: 3, fantasyPros: 3, melKiper: 3, danielJeremiah: 3, mattMiller: 3, 
-          daneBrugler: 2, jordanReid: 2, trevorSikkema: 3, fieldYates: 3, charlieCampbell: 3,
-          lanceZierlein: 3, chadReuter: 3, buckyBrooks: 1, chrisTrapasso: 3, ericEdholm: 3
-        },
-        stats: { completions: 298, attempts: 425, passYards: 3895, passTDs: 33, ints: 7, rushYards: 145, rushTDs: 4 },
-        scouting: {
-          strengths: "Natural arm talent with effortless velocity. Great anticipation throwing to spots. Quick decision maker who processes defenses rapidly.",
-          weaknesses: "Needs to add weight and strength. Can be inconsistent with deep ball accuracy. Injury concerns from college career.",
-          comparison: "Justin Herbert",
-          projection: "Round 1, Pick 3-12"
-        },
-        videoId: "dQw4w9WgXcQ"
-      },
+      { id: 1, name: 'Cameron Ward', pos: 'QB', school: 'Miami', size: '6\'2"', weight: 223, speed: 4.58, tier: 1 },
+      { id: 2, name: 'Shedeur Sanders', pos: 'QB', school: 'Colorado', size: '6\'2"', weight: 215, speed: 4.6, tier: 1 },
+      { id: 3, name: 'Quinn Ewers', pos: 'QB', school: 'Texas', size: '6\'2"', weight: 195, speed: 4.7, tier: 1 },
       { id: 4, name: 'Riley Leonard', pos: 'QB', school: 'Notre Dame', size: '6\'4"', weight: 212, speed: 4.5, tier: 2 },
-      { id: 5, name: 'Jaxson Dart', pos: 'QB', school: 'Ole Miss', size: '6\'2"', weight: 220, speed: 4.6, tier: 2 },
-      { id: 6, name: 'Jalen Milroe', pos: 'QB', school: 'Alabama', size: '6\'2"', weight: 225, speed: 4.5, tier: 2 },
-      { id: 7, name: 'Ashton Jeanty', pos: 'RB', school: 'Boise State', size: '5\'9"', weight: 215, speed: 4.42, tier: 1 },
-      { id: 8, name: 'Omarion Hampton', pos: 'RB', school: 'UNC', size: '6\'0"', weight: 220, speed: 4.5, tier: 1 },
-      { id: 9, name: 'Travis Hunter', pos: 'WR', school: 'Colorado', size: '6\'1"', weight: 185, speed: 4.3, tier: 1 },
-      { id: 10, name: 'Tetairoa McMillan', pos: 'WR', school: 'Arizona', size: '6\'5"', weight: 210, speed: 4.5, tier: 1 },
-      { id: 11, name: 'Emeka Egbuka', pos: 'WR', school: 'Ohio State', size: '6\'1"', weight: 206, speed: 4.3, tier: 1 },
-      { id: 12, name: 'Luther Burden III', pos: 'WR', school: 'Missouri', size: '5\'11"', weight: 208, speed: 4.41, tier: 1 },
-      { id: 13, name: 'Jayden Higgins', pos: 'WR', school: 'Iowa State', size: '6\'4"', weight: 215, speed: 4.47, tier: 2 },
-      { id: 14, name: 'Abdul Carter', pos: 'EDGE', school: 'Penn State', size: '6\'3"', weight: 252, speed: 4.4, tier: 1 },
-      { id: 15, name: 'Colston Loveland', pos: 'TE', school: 'Michigan', size: '6\'5"', weight: 245, speed: 4.7, tier: 1 },
-      { id: 16, name: 'Tyler Warren', pos: 'TE', school: 'Penn State', size: '6\'6"', weight: 260, speed: 4.65, tier: 1 },
-      { id: 17, name: 'Mason Taylor', pos: 'TE', school: 'LSU', size: '6\'5"', weight: 240, speed: 4.6, tier: 2 },
-      { id: 18, name: 'Jalon Walker', pos: 'LB', school: 'Georgia', size: '6\'2"', weight: 245, speed: 4.5, tier: 1 },
-      { id: 19, name: 'Jihaad Campbell', pos: 'LB', school: 'Alabama', size: '6\'3"', weight: 240, speed: 4.55, tier: 2 },
-      { id: 20, name: 'Will Johnson', pos: 'DB', school: 'Michigan', size: '6\'2"', weight: 202, speed: 4.4, tier: 1 },
+      { id: 5, name: 'Ashton Jeanty', pos: 'RB', school: 'Boise State', size: '5\'9"', weight: 215, speed: 4.42, tier: 1 },
+      { id: 6, name: 'Omarion Hampton', pos: 'RB', school: 'UNC', size: '6\'0"', weight: 220, speed: 4.5, tier: 1 },
+      { id: 7, name: 'Travis Hunter', pos: 'WR', school: 'Colorado', size: '6\'1"', weight: 185, speed: 4.3, tier: 1 },
+      { id: 8, name: 'Tetairoa McMillan', pos: 'WR', school: 'Arizona', size: '6\'5"', weight: 210, speed: 4.5, tier: 1 },
+      { id: 9, name: 'Emeka Egbuka', pos: 'WR', school: 'Ohio State', size: '6\'1"', weight: 206, speed: 4.3, tier: 1 },
+      { id: 10, name: 'Abdul Carter', pos: 'EDGE', school: 'Penn State', size: '6\'3"', weight: 252, speed: 4.4, tier: 1 },
     ];
 
     const positions = ['QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'K'];
-
-    const SearchIcon = () => (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="11" cy="11" r="8"></circle>
-        <path d="m21 21-4.35-4.35"></path>
-      </svg>
-    );
-
-    const XIcon = () => (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    );
 
     const DraftBoard = () => {
       const [numTeams] = useState(16);
@@ -130,10 +56,12 @@
       const [players] = useState(mockPlayers);
       const [draftPicks, setDraftPicks] = useState({});
       const [selectedPickSlot, setSelectedPickSlot] = useState(null);
+      
+      const [sleeperUsername, setSleeperUsername] = useState('skjjcruz');
+      const [userLeagues, setUserLeagues] = useState(mockLeagues);
       const [selectedLeague, setSelectedLeague] = useState(mockLeagues[0]);
       const [leagueSeason, setLeagueSeason] = useState(2026);
       const [statsSeason, setStatsSeason] = useState(2025);
-      const [selectedPlayerDetail, setSelectedPlayerDetail] = useState(null);
 
       const generateDraftOrder = () => {
         const order = [];
@@ -158,8 +86,7 @@
 
       const filteredPlayers = players.filter(p => {
         const matchesPos = selectedPos === 'ALL' || p.pos === selectedPos;
-        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             p.school.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
         const notDrafted = !Object.values(draftPicks).includes(p.id);
         return matchesPos && matchesSearch && notDrafted;
       });
@@ -182,12 +109,6 @@
         }
       };
 
-      const handlePlayerRightClick = (e, player) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setSelectedPlayerDetail(player);
-      };
-
       const handlePickSlotClick = (pickKey) => {
         if (draftPicks[pickKey]) {
           const newPicks = { ...draftPicks };
@@ -206,35 +127,21 @@
 
       return (
         <div className="min-h-screen bg-slate-950 text-slate-100">
-          {/* League Selection Bar */}
           <div className="bg-slate-900 border-b border-slate-700 px-4 py-3">
             <div className="flex flex-wrap gap-4 items-center">
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Sleeper username"
-                  value={sleeperUsername}
-                  onChange={(e) => setSleeperUsername(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      fetchSleeperUser(sleeperUsername);
-                    }
-                  }}
-                  className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 w-32"
-                />
-              </div>
+              <input
+                type="text"
+                placeholder="skjjcruz"
+                value={sleeperUsername}
+                onChange={(e) => setSleeperUsername(e.target.value)}
+                className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 w-32"
+              />
 
               <div className="flex items-center gap-2">
                 <label className="text-sm text-slate-400">League Season:</label>
                 <select 
                   value={leagueSeason}
-                  onChange={(e) => {
-                    const newSeason = Number(e.target.value);
-                    setLeagueSeason(newSeason);
-                    if (sleeperUserId) {
-                      fetchSleeperUser(sleeperUsername);
-                    }
-                  }}
+                  onChange={(e) => setLeagueSeason(Number(e.target.value))}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100"
                 >
                   {[2026, 2025, 2024, 2023].map(year => (
@@ -261,12 +168,10 @@
                 <select 
                   value={selectedLeague.id}
                   onChange={(e) => {
-                    const league = userLeagues.find(l => l.id === e.target.value);
+                    const league = userLeagues.find(l => l.id === Number(e.target.value));
                     setSelectedLeague(league);
-                    fetchLeagueData(league.id);
                   }}
                   className="bg-slate-800 border border-slate-600 rounded px-3 py-1.5 text-sm text-slate-100 min-w-[200px]"
-                  disabled={loading}
                 >
                   {userLeagues.map(league => (
                     <option key={league.id} value={league.id}>{league.name}</option>
@@ -275,22 +180,14 @@
               </div>
 
               <button 
-                onClick={() => fetchSleeperUser(sleeperUsername)}
-                disabled={loading || !sleeperUsername}
-                className="ml-auto px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 disabled:bg-slate-600 disabled:cursor-not-allowed text-slate-900 rounded text-sm font-bold"
+                className="ml-auto px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-slate-900 rounded text-sm font-bold"
               >
-                {loading ? 'Loading...' : 'Reload'}
+                Reload
               </button>
             </div>
 
             <div className="mt-2 text-xs text-slate-500">
-              {error ? (
-                <span className="text-red-500">Error: {error}</span>
-              ) : sleeperUserId ? (
-                <span>Ready ✅ (Tap L / R on a team) — League {leagueSeason}, Stats {statsSeason}, Week 3</span>
-              ) : (
-                <span>Enter your Sleeper username and press Enter or click Reload</span>
-              )}
+              Ready ✅ (Tap L / R on a team) — League {leagueSeason}, Stats {statsSeason}, Week 3
             </div>
           </div>
 
@@ -309,8 +206,7 @@
             </div>
           </div>
 
-          <div className="flex gap-4 p-4 h-[calc(100vh-140px)]">
-            {/* Draft Board - Left */}
+          <div className="flex gap-4 p-4 h-[calc(100vh-180px)]">
             <div className="w-1/2 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden flex flex-col">
               <div className="bg-slate-800 px-4 py-3 border-b border-slate-700 flex-shrink-0">
                 <h2 className="font-bold text-yellow-500">Draft Board</h2>
@@ -351,8 +247,6 @@
                                   <div className="text-sm text-slate-400 flex gap-3 mt-0.5">
                                     <span className="font-bold text-yellow-500">{player.pos}</span>
                                     <span>{player.school}</span>
-                                    <span className="hidden sm:inline">{player.size}</span>
-                                    <span className="hidden sm:inline">{player.weight} lbs</span>
                                   </div>
                                 </>
                               ) : (
@@ -368,39 +262,23 @@
               </div>
             </div>
 
-            {/* Player Rankings - Right */}
             <div className="w-1/2 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden flex flex-col">
               <div className="bg-slate-800 px-4 py-3 border-b border-slate-700 flex-shrink-0">
                 <h2 className="font-bold text-yellow-500 mb-3">Player Rankings</h2>
                 
-                <div className="relative mb-3">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    <SearchIcon />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search players..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-600 rounded pl-10 pr-10 py-2 text-sm text-slate-100"
-                  />
-                  {searchTerm && (
-                    <div 
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 cursor-pointer"
-                      onClick={() => setSearchTerm('')}
-                    >
-                      <XIcon />
-                    </div>
-                  )}
-                </div>
+                <input
+                  type="text"
+                  placeholder="Search players..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-600 rounded px-3 py-2 text-sm text-slate-100 mb-3"
+                />
 
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setSelectedPos('ALL')}
-                    className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
-                      selectedPos === 'ALL' 
-                        ? 'bg-yellow-500 text-slate-900' 
-                        : 'bg-slate-700 hover:bg-slate-600'
+                    className={`px-3 py-1 rounded text-xs font-bold ${
+                      selectedPos === 'ALL' ? 'bg-yellow-500 text-slate-900' : 'bg-slate-700'
                     }`}
                   >
                     ALL ({totalAvailable})
@@ -409,10 +287,8 @@
                     <button
                       key={pos}
                       onClick={() => setSelectedPos(pos)}
-                      className={`px-3 py-1 rounded text-xs font-bold transition-colors ${
-                        selectedPos === pos 
-                          ? 'bg-yellow-500 text-slate-900' 
-                          : 'bg-slate-700 hover:bg-slate-600'
+                      className={`px-3 py-1 rounded text-xs font-bold ${
+                        selectedPos === pos ? 'bg-yellow-500 text-slate-900' : 'bg-slate-700'
                       }`}
                     >
                       {pos} ({positionCounts[pos] || 0})
@@ -422,384 +298,29 @@
               </div>
 
               <div className="flex-1 overflow-y-auto scroll-container">
-                {filteredPlayers.length === 0 ? (
-                  <div className="text-center py-12 text-slate-500">
-                    {searchTerm ? 'No players found' : 'All players drafted!'}
-                  </div>
-                ) : (
-                  <div className="divide-y divide-slate-700">
-                    {filteredPlayers.map((player, idx) => (
-                      <div
-                        key={player.id}
-                        onClick={() => handlePlayerClick(player)}
-                        onContextMenu={(e) => handlePlayerRightClick(e, player)}
-                        className="p-3 hover:bg-slate-800 cursor-pointer transition-colors flex items-center gap-3"
-                      >
-                        <div className="w-8 text-center text-slate-500 font-bold text-sm">
-                          {idx + 1}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-bold text-sm truncate">{player.name}</div>
-                          <div className="text-xs text-slate-400 flex gap-3 mt-0.5">
-                            <span className="font-bold text-yellow-500">{player.pos}</span>
-                            <span>{player.school}</span>
-                            <span>{player.size}</span>
-                            <span>{player.weight} lbs</span>
-                            <span>{player.speed}s</span>
-                          </div>
-                        </div>
-                        <div className="flex gap-2 items-center">
-                          <div className="text-xs px-2 py-1 rounded bg-slate-700 text-slate-300">
-                            Tier {player.tier}
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedPlayerDetail(player);
-                            }}
-                            className="text-yellow-500 hover:text-yellow-400 text-xs px-2 py-1 rounded hover:bg-slate-700"
-                          >
-                            📊
-                          </button>
+                {filteredPlayers.map((player, idx) => (
+                  <div
+                    key={player.id}
+                    onClick={() => handlePlayerClick(player)}
+                    className="p-3 hover:bg-slate-800 cursor-pointer border-b border-slate-700"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 text-slate-500 font-bold">{idx + 1}</div>
+                      <div className="flex-1">
+                        <div className="font-bold">{player.name}</div>
+                        <div className="text-xs text-slate-400">
+                          {player.pos} • {player.school} • {player.size} • {player.weight} lbs
                         </div>
                       </div>
-                    ))}
+                      <div className="text-xs px-2 py-1 rounded bg-slate-700">
+                        Tier {player.tier}
+                      </div>
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
             </div>
           </div>
-
-          {/* Player Detail Modal */}
-          {selectedPlayerDetail && (
-            <div 
-              className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
-              onClick={() => setSelectedPlayerDetail(null)}
-            >
-              <div 
-                className="bg-slate-900 border border-slate-700 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto scroll-container"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Header */}
-                <div className="bg-slate-800 p-6 border-b border-slate-700 sticky top-0 z-10">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h2 className="text-2xl font-bold text-yellow-500">{selectedPlayerDetail.name}</h2>
-                      <div className="flex gap-4 text-sm text-slate-300 mt-2">
-                        <span className="font-bold">{selectedPlayerDetail.pos}</span>
-                        <span>•</span>
-                        <span>{selectedPlayerDetail.school}</span>
-                        <span>•</span>
-                        <span>{selectedPlayerDetail.size}</span>
-                        <span>•</span>
-                        <span>{selectedPlayerDetail.weight} lbs</span>
-                        <span>•</span>
-                        <span>{selectedPlayerDetail.speed}s 40-yard</span>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={() => setSelectedPlayerDetail(null)}
-                      className="text-slate-400 hover:text-slate-200 text-2xl"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6 space-y-6">
-                  {/* Consensus Ranking */}
-                  <div>
-                    <h3 className="text-lg font-bold text-yellow-500 mb-3">Consensus Ranking</h3>
-                    <div className="bg-slate-800 rounded p-4 flex gap-8">
-                      <div>
-                        <div className="text-slate-400 text-sm">Overall</div>
-                        <div className="text-3xl font-bold text-yellow-500">#{filteredPlayers.findIndex(p => p.id === selectedPlayerDetail.id) + 1}</div>
-                      </div>
-                      <div>
-                        <div className="text-slate-400 text-sm">Position</div>
-                        <div className="text-3xl font-bold text-yellow-500">#{players.filter(p => p.pos === selectedPlayerDetail.pos).findIndex(p => p.id === selectedPlayerDetail.id) + 1}</div>
-                      </div>
-                      <div>
-                        <div className="text-slate-400 text-sm">Tier</div>
-                        <div className="text-3xl font-bold text-yellow-500">{selectedPlayerDetail.tier}</div>
-                      </div>
-                      {selectedPlayerDetail.scouting && (
-                        <div>
-                          <div className="text-slate-400 text-sm">Projection</div>
-                          <div className="text-lg font-bold text-slate-300">{selectedPlayerDetail.scouting.projection}</div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* YouTube Highlights */}
-                  {selectedPlayerDetail.videoId && (
-                    <div>
-                      <h3 className="text-lg font-bold text-yellow-500 mb-3">Highlights</h3>
-                      <div className="bg-slate-800 rounded overflow-hidden">
-                        <iframe
-                          width="100%"
-                          height="400"
-                          src={`https://www.youtube.com/embed/${selectedPlayerDetail.videoId}`}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="w-full"
-                        ></iframe>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Scouting Report */}
-                  {selectedPlayerDetail.scouting && (
-                    <div>
-                      <h3 className="text-lg font-bold text-yellow-500 mb-3">Scouting Report</h3>
-                      <div className="bg-slate-800 rounded p-4 space-y-4">
-                        <div>
-                          <h4 className="font-bold text-green-500 text-sm mb-2">Strengths</h4>
-                          <p className="text-sm text-slate-300">{selectedPlayerDetail.scouting.strengths}</p>
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-red-500 text-sm mb-2">Weaknesses</h4>
-                          <p className="text-sm text-slate-300">{selectedPlayerDetail.scouting.weaknesses}</p>
-                        </div>
-                        <div className="flex gap-8 pt-2 border-t border-slate-700">
-                          <div>
-                            <h4 className="font-bold text-slate-400 text-xs mb-1">NFL Comparison</h4>
-                            <p className="text-sm font-bold text-yellow-500">{selectedPlayerDetail.scouting.comparison}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* All Source Rankings */}
-                  {selectedPlayerDetail.rankings && (
-                    <div>
-                      <h3 className="text-lg font-bold text-yellow-500 mb-3">All Source Rankings</h3>
-                      <div className="space-y-4">
-                        {/* Major Sites */}
-                        <div>
-                          <h4 className="font-bold text-slate-300 mb-2 text-sm">Major Sites</h4>
-                          <div className="bg-slate-800 rounded p-4 grid grid-cols-3 gap-3">
-                            {selectedPlayerDetail.rankings.pff && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Pro Football Focus</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.pff}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.theAthletic && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">The Athletic</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.theAthletic}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.espn && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">ESPN</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.espn}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.nflDotCom && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">NFL.com</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.nflDotCom}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.pfn && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Pro Football Network</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.pfn}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.cbs && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">CBS Sports</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.cbs}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.si && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Sports Illustrated</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.si}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.usaToday && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">USA Today</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.usaToday}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.bleacherReport && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Bleacher Report</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.bleacherReport}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.fantasyPros && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Fantasy Pros</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.fantasyPros}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Individual Analysts */}
-                        <div>
-                          <h4 className="font-bold text-slate-300 mb-2 text-sm">Individual Analysts</h4>
-                          <div className="bg-slate-800 rounded p-4 grid grid-cols-3 gap-3">
-                            {selectedPlayerDetail.rankings.melKiper && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Mel Kiper Jr.</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.melKiper}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.danielJeremiah && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Daniel Jeremiah</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.danielJeremiah}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.mattMiller && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Matt Miller</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.mattMiller}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.daneBrugler && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Dane Brugler</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.daneBrugler}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.jordanReid && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Jordan Reid</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.jordanReid}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.trevorSikkema && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Trevor Sikkema</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.trevorSikkema}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.fieldYates && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Field Yates</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.fieldYates}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.charlieCampbell && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Charlie Campbell</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.charlieCampbell}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.lanceZierlein && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Lance Zierlein</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.lanceZierlein}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.chadReuter && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Chad Reuter</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.chadReuter}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.buckyBrooks && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Bucky Brooks</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.buckyBrooks}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.chrisTrapasso && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Chris Trapasso</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.chrisTrapasso}</span>
-                              </div>
-                            )}
-                            {selectedPlayerDetail.rankings.ericEdholm && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-400">Eric Edholm</span>
-                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.ericEdholm}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* College Stats */}
-                  {selectedPlayerDetail.stats && selectedPlayerDetail.pos === 'QB' && (
-                    <div>
-                      <h3 className="text-lg font-bold text-yellow-500 mb-3">2025 Season Stats</h3>
-                      <div className="bg-slate-800 rounded p-4">
-                        <div className="grid grid-cols-4 gap-4">
-                          <div>
-                            <div className="text-slate-400 text-xs">Comp/Att</div>
-                            <div className="font-bold">{selectedPlayerDetail.stats.completions}/{selectedPlayerDetail.stats.attempts}</div>
-                            <div className="text-slate-400 text-xs">{((selectedPlayerDetail.stats.completions / selectedPlayerDetail.stats.attempts) * 100).toFixed(1)}%</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-400 text-xs">Pass Yards</div>
-                            <div className="font-bold text-yellow-500">{selectedPlayerDetail.stats.passYards}</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-400 text-xs">Pass TDs</div>
-                            <div className="font-bold text-green-500">{selectedPlayerDetail.stats.passTDs}</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-400 text-xs">INTs</div>
-                            <div className="font-bold text-red-500">{selectedPlayerDetail.stats.ints}</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-400 text-xs">Rush Yards</div>
-                            <div className="font-bold">{selectedPlayerDetail.stats.rushYards}</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-400 text-xs">Rush TDs</div>
-                            <div className="font-bold text-green-500">{selectedPlayerDetail.stats.rushTDs}</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-400 text-xs">TD:INT Ratio</div>
-                            <div className="font-bold">{(selectedPlayerDetail.stats.passTDs / selectedPlayerDetail.stats.ints).toFixed(1)}:1</div>
-                          </div>
-                          <div>
-                            <div className="text-slate-400 text-xs">YPA</div>
-                            <div className="font-bold">{(selectedPlayerDetail.stats.passYards / selectedPlayerDetail.stats.attempts).toFixed(1)}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => {
-                        handlePlayerClick(selectedPlayerDetail);
-                        setSelectedPlayerDetail(null);
-                      }}
-                      className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-3 rounded"
-                    >
-                      Draft Player
-                    </button>
-                    <button
-                      onClick={() => setSelectedPlayerDetail(null)}
-                      className="px-6 bg-slate-700 hover:bg-slate-600 text-slate-100 font-bold py-3 rounded"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       );
     };
