@@ -37,18 +37,54 @@
     const mockPlayers = [
       { 
         id: 1, name: 'Cameron Ward', pos: 'QB', school: 'Miami', size: '6\'2"', weight: 223, speed: 4.58, tier: 1,
-        rankings: { pff: 1, theAthletic: 2, espn: 1, nflDotCom: 3, melKiper: 1, danielJeremiah: 2, daneBrugler: 1 },
-        stats: { completions: 325, attempts: 480, passYards: 4250, passTDs: 38, ints: 8, rushYards: 285, rushTDs: 5 }
+        rankings: { 
+          pff: 1, theAthletic: 2, espn: 1, nflDotCom: 3, pfn: 1, cbs: 2, si: 1, usaToday: 4, 
+          bleacherReport: 2, fantasyPros: 1, melKiper: 1, danielJeremiah: 2, mattMiller: 1, 
+          daneBrugler: 1, jordanReid: 3, trevorSikkema: 1, fieldYates: 2, charlieCampbell: 1,
+          lanceZierlein: 2, chadReuter: 1, buckyBrooks: 3, chrisTrapasso: 2, ericEdholm: 1
+        },
+        stats: { completions: 325, attempts: 480, passYards: 4250, passTDs: 38, ints: 8, rushYards: 285, rushTDs: 5 },
+        scouting: {
+          strengths: "Elite arm strength with ability to make all NFL throws. Shows excellent pocket presence and poise under pressure. Quick release and good ball placement on intermediate routes.",
+          weaknesses: "Needs to improve consistency on deep ball accuracy. Can be too aggressive forcing throws into tight windows. Footwork occasionally gets sloppy when hurried.",
+          comparison: "Matthew Stafford",
+          projection: "Round 1, Pick 1-5"
+        },
+        videoId: "dQw4w9WgXcQ"
       },
       { 
         id: 2, name: 'Shedeur Sanders', pos: 'QB', school: 'Colorado', size: '6\'2"', weight: 215, speed: 4.6, tier: 1,
-        rankings: { pff: 2, theAthletic: 1, espn: 2, nflDotCom: 2, melKiper: 2, danielJeremiah: 1, daneBrugler: 3 },
-        stats: { completions: 310, attempts: 445, passYards: 3926, passTDs: 35, ints: 6, rushYards: 156, rushTDs: 2 }
+        rankings: { 
+          pff: 2, theAthletic: 1, espn: 2, nflDotCom: 2, pfn: 2, cbs: 1, si: 2, usaToday: 3, 
+          bleacherReport: 1, fantasyPros: 2, melKiper: 2, danielJeremiah: 1, mattMiller: 2, 
+          daneBrugler: 3, jordanReid: 1, trevorSikkema: 2, fieldYates: 1, charlieCampbell: 2,
+          lanceZierlein: 1, chadReuter: 2, buckyBrooks: 2, chrisTrapasso: 1, ericEdholm: 2
+        },
+        stats: { completions: 310, attempts: 445, passYards: 3926, passTDs: 35, ints: 6, rushYards: 156, rushTDs: 2 },
+        scouting: {
+          strengths: "Outstanding accuracy and touch on all levels. Excellent pre-snap reads and football IQ. Prototypical pocket passer with great anticipation.",
+          weaknesses: "Limited mobility and athleticism. Needs to add strength to absorb NFL hits. Sometimes holds ball too long looking for perfect throw.",
+          comparison: "Kirk Cousins",
+          projection: "Round 1, Pick 1-10"
+        },
+        videoId: "dQw4w9WgXcQ"
       },
       { 
         id: 3, name: 'Quinn Ewers', pos: 'QB', school: 'Texas', size: '6\'2"', weight: 195, speed: 4.7, tier: 1,
-        rankings: { pff: 3, theAthletic: 3, espn: 3, nflDotCom: 1, melKiper: 3, danielJeremiah: 3, daneBrugler: 2 },
-        stats: { completions: 298, attempts: 425, passYards: 3895, passTDs: 33, ints: 7, rushYards: 145, rushTDs: 4 }
+        rankings: { 
+          pff: 3, theAthletic: 3, espn: 3, nflDotCom: 1, pfn: 3, cbs: 3, si: 3, usaToday: 2, 
+          bleacherReport: 3, fantasyPros: 3, melKiper: 3, danielJeremiah: 3, mattMiller: 3, 
+          daneBrugler: 2, jordanReid: 2, trevorSikkema: 3, fieldYates: 3, charlieCampbell: 3,
+          lanceZierlein: 3, chadReuter: 3, buckyBrooks: 1, chrisTrapasso: 3, ericEdholm: 3
+        },
+        stats: { completions: 298, attempts: 425, passYards: 3895, passTDs: 33, ints: 7, rushYards: 145, rushTDs: 4 },
+        scouting: {
+          strengths: "Natural arm talent with effortless velocity. Great anticipation throwing to spots. Quick decision maker who processes defenses rapidly.",
+          weaknesses: "Needs to add weight and strength. Can be inconsistent with deep ball accuracy. Injury concerns from college career.",
+          comparison: "Justin Herbert",
+          projection: "Round 1, Pick 3-12"
+        },
+        videoId: "dQw4w9WgXcQ"
       },
       { id: 4, name: 'Riley Leonard', pos: 'QB', school: 'Notre Dame', size: '6\'4"', weight: 212, speed: 4.5, tier: 2 },
       { id: 5, name: 'Jaxson Dart', pos: 'QB', school: 'Ole Miss', size: '6\'2"', weight: 220, speed: 4.6, tier: 2 },
@@ -466,18 +502,65 @@
                         <div className="text-slate-400 text-sm">Tier</div>
                         <div className="text-3xl font-bold text-yellow-500">{selectedPlayerDetail.tier}</div>
                       </div>
+                      {selectedPlayerDetail.scouting && (
+                        <div>
+                          <div className="text-slate-400 text-sm">Projection</div>
+                          <div className="text-lg font-bold text-slate-300">{selectedPlayerDetail.scouting.projection}</div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Source Rankings */}
+                  {/* YouTube Highlights */}
+                  {selectedPlayerDetail.videoId && (
+                    <div>
+                      <h3 className="text-lg font-bold text-yellow-500 mb-3">Highlights</h3>
+                      <div className="bg-slate-800 rounded overflow-hidden">
+                        <iframe
+                          width="100%"
+                          height="400"
+                          src={`https://www.youtube.com/embed/${selectedPlayerDetail.videoId}`}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full"
+                        ></iframe>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Scouting Report */}
+                  {selectedPlayerDetail.scouting && (
+                    <div>
+                      <h3 className="text-lg font-bold text-yellow-500 mb-3">Scouting Report</h3>
+                      <div className="bg-slate-800 rounded p-4 space-y-4">
+                        <div>
+                          <h4 className="font-bold text-green-500 text-sm mb-2">Strengths</h4>
+                          <p className="text-sm text-slate-300">{selectedPlayerDetail.scouting.strengths}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-red-500 text-sm mb-2">Weaknesses</h4>
+                          <p className="text-sm text-slate-300">{selectedPlayerDetail.scouting.weaknesses}</p>
+                        </div>
+                        <div className="flex gap-8 pt-2 border-t border-slate-700">
+                          <div>
+                            <h4 className="font-bold text-slate-400 text-xs mb-1">NFL Comparison</h4>
+                            <p className="text-sm font-bold text-yellow-500">{selectedPlayerDetail.scouting.comparison}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* All Source Rankings */}
                   {selectedPlayerDetail.rankings && (
                     <div>
-                      <h3 className="text-lg font-bold text-yellow-500 mb-3">Source Rankings</h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <h3 className="text-lg font-bold text-yellow-500 mb-3">All Source Rankings</h3>
+                      <div className="space-y-4">
                         {/* Major Sites */}
-                        <div className="bg-slate-800 rounded p-4">
-                          <h4 className="font-bold text-slate-300 mb-3 text-sm">Major Sites</h4>
-                          <div className="space-y-2">
+                        <div>
+                          <h4 className="font-bold text-slate-300 mb-2 text-sm">Major Sites</h4>
+                          <div className="bg-slate-800 rounded p-4 grid grid-cols-3 gap-3">
                             {selectedPlayerDetail.rankings.pff && (
                               <div className="flex justify-between text-sm">
                                 <span className="text-slate-400">Pro Football Focus</span>
@@ -502,13 +585,49 @@
                                 <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.nflDotCom}</span>
                               </div>
                             )}
+                            {selectedPlayerDetail.rankings.pfn && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Pro Football Network</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.pfn}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.cbs && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">CBS Sports</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.cbs}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.si && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Sports Illustrated</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.si}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.usaToday && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">USA Today</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.usaToday}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.bleacherReport && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Bleacher Report</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.bleacherReport}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.fantasyPros && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Fantasy Pros</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.fantasyPros}</span>
+                              </div>
+                            )}
                           </div>
                         </div>
 
                         {/* Individual Analysts */}
-                        <div className="bg-slate-800 rounded p-4">
-                          <h4 className="font-bold text-slate-300 mb-3 text-sm">Top Analysts</h4>
-                          <div className="space-y-2">
+                        <div>
+                          <h4 className="font-bold text-slate-300 mb-2 text-sm">Individual Analysts</h4>
+                          <div className="bg-slate-800 rounded p-4 grid grid-cols-3 gap-3">
                             {selectedPlayerDetail.rankings.melKiper && (
                               <div className="flex justify-between text-sm">
                                 <span className="text-slate-400">Mel Kiper Jr.</span>
@@ -521,10 +640,70 @@
                                 <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.danielJeremiah}</span>
                               </div>
                             )}
+                            {selectedPlayerDetail.rankings.mattMiller && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Matt Miller</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.mattMiller}</span>
+                              </div>
+                            )}
                             {selectedPlayerDetail.rankings.daneBrugler && (
                               <div className="flex justify-between text-sm">
                                 <span className="text-slate-400">Dane Brugler</span>
                                 <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.daneBrugler}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.jordanReid && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Jordan Reid</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.jordanReid}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.trevorSikkema && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Trevor Sikkema</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.trevorSikkema}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.fieldYates && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Field Yates</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.fieldYates}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.charlieCampbell && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Charlie Campbell</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.charlieCampbell}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.lanceZierlein && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Lance Zierlein</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.lanceZierlein}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.chadReuter && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Chad Reuter</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.chadReuter}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.buckyBrooks && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Bucky Brooks</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.buckyBrooks}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.chrisTrapasso && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Chris Trapasso</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.chrisTrapasso}</span>
+                              </div>
+                            )}
+                            {selectedPlayerDetail.rankings.ericEdholm && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-slate-400">Eric Edholm</span>
+                                <span className="font-bold text-yellow-500">#{selectedPlayerDetail.rankings.ericEdholm}</span>
                               </div>
                             )}
                           </div>
